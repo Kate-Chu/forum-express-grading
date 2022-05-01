@@ -56,7 +56,7 @@ const userController = {
   putUser: (req, res, next) => {
     const { name } = req.body
     if (!name) throw new Error('User name is required!')
-    if (req.params.id !== req.user.id) throw new Error('You do not have permission to do that.')
+    if (Number(req.params.id) !== req.user.id) throw new Error('You do not have permission to do that.')
     const { file } = req
     return Promise.all([
       User.findByPk(req.params.id),
