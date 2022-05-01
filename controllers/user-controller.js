@@ -56,6 +56,7 @@ const userController = {
   putUser: (req, res, next) => {
     const { name } = req.body
     if (!name) throw new Error('User name is required!')
+    if (req.params.id !== req.user.id) throw new Error('You do not have permission to do that.')
     const { file } = req
     return Promise.all([
       User.findByPk(req.params.id),
@@ -63,7 +64,6 @@ const userController = {
     ])
       .then(([user, filePath]) => {
         if (!user) throw new Error("User didn't exist!")
-        if (user.id !== req.user.id) throw new Error('You do not have permission to do that.')
         return user.update({
           name,
           image: filePath || user.image
