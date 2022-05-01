@@ -3,7 +3,11 @@ const sinon = require('sinon')
 const should = chai.should()
 
 const helpers = require('../helpers/auth-helpers')
+<<<<<<< HEAD
 const { createModelMock, createControllerProxy, mockRequest, mockResponse, mockNext } = require('../helpers/unit-test-helper')
+=======
+const { createModelMock, createControllerProxy, mockRequest, mockResponse, mockNext } = require('../helpers/unit-test-helper');
+>>>>>>> origin/R03-test
 
 describe('# R03', () => {
   describe('# R03: 建立 User Profile', function () {
@@ -15,13 +19,22 @@ describe('# R03', () => {
           .stub(helpers, 'ensureAuthenticated')
           .returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1 })
+<<<<<<< HEAD
         // 製作假資料
         // 本 context 會用這筆資料進行測試
+=======
+       // 製作假資料
+       // 本 context 會用這筆資料進行測試
+>>>>>>> origin/R03-test
         this.UserMock = createModelMock('User', [{
           id: 1,
           email: 'root@example.com',
           name: 'admin',
+<<<<<<< HEAD
           isAdmin: false
+=======
+          isAdmin: false,
+>>>>>>> origin/R03-test
         }])
 
         // 修改 userController 中的資料庫連線設定，由連向真實的資料庫 -> 改為連向模擬的 User table
@@ -36,10 +49,17 @@ describe('# R03', () => {
         const next = mockNext
 
         // 測試作業指定的 userController.getUser 函式
+<<<<<<< HEAD
         await this.userController.getUser(req, res, next)
 
         // getUser 正確執行的話，應呼叫 res.render
         // res.render 的第 1 個參數要是 'users/profile'
+=======
+        await this.userController.getUser(req, res, next);
+
+        // getUser 正確執行的話，應呼叫 res.render
+        // res.render 的第 1 個參數要是 'users/profile' 
+>>>>>>> origin/R03-test
         // res.render 的第 2 個參數要是 user，其 id 屬性的值應是 1
         res.render.getCall(0).args[0].should.equal('users/profile')
         res.render.getCall(0).args[1].user.id.should.equal(1)
