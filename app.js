@@ -1,6 +1,6 @@
 const path = require('path')
-
 const express = require('express')
+const bodyParser = require('body-parser')
 const handlebars = require('express-handlebars')
 const flash = require('connect-flash')
 const methodOverride = require('method-override')
@@ -22,6 +22,7 @@ app.engine('handlebars', handlebars({ extname: '.handlebars', helpers: handlebar
 app.set('view engine', 'handlebars')
 
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: false }))
 app.use(passport.initialize())
