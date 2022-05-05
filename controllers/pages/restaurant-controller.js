@@ -1,7 +1,7 @@
-const { Restaurant, Category, Comment, User } = require('../models')
-const { getOffset, getPagination } = require('../helpers/pagination-helper')
-const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize('sqlite::memory:')
+const { Restaurant, Category, Comment, User } = require('../../models')
+const { getOffset, getPagination } = require('../../helpers/pagination-helper')
+// const { Sequelize } = require('sequelize')
+// const sequelize = new Sequelize('sqlite::memory:')
 
 const restaurantController = {
   getRestaurants: (req, res, next) => {
@@ -104,33 +104,46 @@ const restaurantController = {
       .catch(err => next(err))
   },
   getTopRestaurants: (req, res, next) => {
-    return Restaurant.findAll({
-      include: {
-        model: User,
-        as: 'FavoritedUsers',
-        attributes: [
-          'id'
-        ],
-        duplicating: false
-      },
-      attributes: [
-        'id', 'name', 'image', 'description',
-        [sequelize.fn('COUNT', sequelize.col('FavoritedUsers.id')), 'favoritedCount']
-      ],
-      group: 'id',
-      order: [[sequelize.col('favoritedCount'), 'DESC']],
-      limit: 10
-    })
+    return Restaurant.findAll({ include: [{ model: User, as: 'FavoritedUsers' }] })
       .then(restaurants => {
         restaurants = restaurants.map(restaurant => ({
           ...restaurant.toJSON(),
           favoritedCount: restaurant.FavoritedUsers.length,
           isFavorited: req.user?.FavoritedRestaurants?.some(f => f.id === restaurant.id) || []
         }))
+        restaurants = restaurants.sort((a, b) => b.favoritedCount - a.favoritedCount).slice(0, 10)
         return res.render('top-restaurants', { restaurants: restaurants })
       })
       .catch(err => next(err))
   }
+  // getTopRestaurants: (req, res, next) => {
+  //   return Restaurant.findAll({
+  //     include: {
+  //       model: User,
+  //       as: 'FavoritedUsers',
+  //       attributes: [
+  //         'id'
+  //       ],
+  //       duplicating: false
+  //     },
+  //     attributes: [
+  //       'id', 'name', 'image', 'description',
+  //       [sequelize.fn('COUNT', sequelize.col('FavoritedUsers.id')), 'favoritedCount']
+  //     ],
+  //     group: 'id',
+  //     order: [[sequelize.col('favoritedCount'), 'DESC']],
+  //     limit: 10
+  //   })
+  //     .then(restaurants => {
+  //       restaurants = restaurants.map(restaurant => ({
+  //         ...restaurant.toJSON(),
+  //         favoritedCount: restaurant.FavoritedUsers.length,
+  //         isFavorited: req.user?.FavoritedRestaurants?.some(f => f.id === restaurant.id) || []
+  //       }))
+  //       return res.render('top-restaurants', { restaurants: restaurants })
+  //     })
+  //     .catch(err => next(err))
+  // }
 }
 
 module.exports = restaurantController
